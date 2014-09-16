@@ -11,6 +11,12 @@ import java.io.InputStreamReader
 import play.api.libs.json._
 
 import javax.imageio._
+
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
+import java.awt.Color
+import java.awt.Font
+
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageWriteParam._
 
@@ -36,7 +42,7 @@ object Application extends Controller {
     val reader = ImageIO.getImageReadersBySuffix("jpg").next();
 
     // Fix me: Colors are distorted...
-    val i = Http(src)
+    val sourceImage = Http(src)
       .option(HttpOptions.connTimeout(2000))
       .option(HttpOptions.readTimeout(5000)) { inputStream =>
         val imageInputStream = ImageIO.createImageInputStream(inputStream);
@@ -44,18 +50,39 @@ object Application extends Controller {
         reader.readAll(0, null); // Important, also read metadata
     }
 
-    val renderedImage = i.getRenderedImage();
+    val sourceBuffer = sourceImage.getRenderedImage.asInstanceOf[java.awt.image.BufferedImage]
 
-    // Modify renderedImage as you like
+    val m = sourceBuffer.getSampleModel
+
+    println(m.getNumBands)
+
+    val w = sourceBuffer.getWidth
+    val h = sourceBuffer.getHeight
+    val target = new BufferedImage(
+      w, h+20, sourceBuffer.getType)
+
+    val g2d = target.createGraphics();
+    g2d.drawImage(sourceBuffer, 0, 0, null);
+    g2d.setPaint(Color.red);
+    g2d.setFont(new Font("Serif", Font.BOLD, 20));
+    val s = "Hello, world!";
+    val fm = g2d.getFontMetrics();
+    val x = 0;
+    val y = sourceBuffer.getHeight + 20;
+    g2d.drawString(s, x, y);
+    g2d.dispose();
 
     val writer = ImageIO.getImageWriter(reader);
     val param = writer.getDefaultWriteParam();
     param.setCompressionMode(MODE_COPY_FROM_METADATA); // This modes ensures closest to original compression
 
+
+// BufferedImage
+
     val bo = new ByteArrayOutputStream
     val ios = ImageIO.createImageOutputStream(bo)
     writer.setOutput(ios)
-    writer.write(null, i, param)
+    writer.write(null, new IIOImage(target, null, null),  param)
 
 
     Ok(bo.toByteArray).as("image/jpeg")  }
