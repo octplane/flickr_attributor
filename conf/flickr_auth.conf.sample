@@ -1,0 +1,3 @@
+# flickr_auth.conf
+flickr.key=CHANGEME
+flickr.secret=CHANGEMETOO
