@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage
 import java.awt.Color
 import java.awt.Font
 import java.awt.color.ColorSpace
+import java.awt.RenderingHints
 
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageWriteParam._
@@ -38,7 +39,8 @@ object Application extends Controller {
 
 
     val img = new FlickrImage(id)
-    val t = img.title
+    val title = img.title
+    val user = img.user
     val l = img.license.toString
 
     val src = img.images("Medium 640")
@@ -60,15 +62,21 @@ object Application extends Controller {
     val target = new BufferedImage(
       w, h+20, sourceBuffer.getType)
 
-    val g2d = target.createGraphics();
+    val g2d = target.createGraphics()
+
+    g2d.setRenderingHint(
+      RenderingHints.KEY_ANTIALIASING,
+      RenderingHints.VALUE_ANTIALIAS_ON)
+
     g2d.drawImage(sourceBuffer, 0, 0, null)
-    g2d.setPaint(Color.red)
-    g2d.setFont(new Font("Serif", Font.PLAIN, 20))
-    val s = t
+    g2d.setPaint(Color.lightGray)
+    g2d.setFont(new Font("Serif", Font.PLAIN, 19))
+
+    val text = s"$title by $user on Flickr"
     val fm = g2d.getFontMetrics()
-    val x = 0
+    val x = 1
     val y = sourceBuffer.getHeight + 20 - fm.getMaxDescent
-    g2d.drawString(s, x, y)
+    g2d.drawString(text, x, y)
     g2d.dispose();
 
     val writer = ImageIO.getImageWriter(reader)
@@ -92,10 +100,9 @@ class FlickrImage(id: String) {
 
   val key = Play.current.configuration.getString("flickr.key").get
 
-
   val rawTitle = (__ \ 'photo \ 'title \ '_content).json.pick[JsString]
   val rawLicense = (__ \ 'photo \ 'license ).json.pick[JsString]
-
+  val rawUser = ( __ \ 'photo \ 'owner \ 'username).json.pick[JsString]
 
   val baseRequest = Http(flickREndpoint)
       .param("api_key", key)
@@ -122,6 +129,7 @@ class FlickrImage(id: String) {
 
   lazy val title = info.transform(rawTitle).get.value
   lazy val license = info.transform(rawLicense).get.value
+  lazy val user = info.transform(rawUser).get.value
 
   lazy val images = {
     val picker = (__ \ 'sizes \ 'size ).json.pick[JsArray]
