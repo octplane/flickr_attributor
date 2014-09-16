@@ -16,12 +16,15 @@ import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.Color
 import java.awt.Font
+import java.awt.color.ColorSpace
 
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageWriteParam._
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam
+
+import scala.collection.JavaConversions._
 
 object Application extends Controller {
-
 
   def index = Action {
 
@@ -52,37 +55,32 @@ object Application extends Controller {
 
     val sourceBuffer = sourceImage.getRenderedImage.asInstanceOf[java.awt.image.BufferedImage]
 
-    val m = sourceBuffer.getSampleModel
-
-    println(m.getNumBands)
-
     val w = sourceBuffer.getWidth
     val h = sourceBuffer.getHeight
     val target = new BufferedImage(
       w, h+20, sourceBuffer.getType)
 
     val g2d = target.createGraphics();
-    g2d.drawImage(sourceBuffer, 0, 0, null);
-    g2d.setPaint(Color.red);
-    g2d.setFont(new Font("Serif", Font.BOLD, 20));
-    val s = "Hello, world!";
-    val fm = g2d.getFontMetrics();
-    val x = 0;
-    val y = sourceBuffer.getHeight + 20;
-    g2d.drawString(s, x, y);
+    g2d.drawImage(sourceBuffer, 0, 0, null)
+    g2d.setPaint(Color.red)
+    g2d.setFont(new Font("Serif", Font.PLAIN, 20))
+    val s = t
+    val fm = g2d.getFontMetrics()
+    val x = 0
+    val y = sourceBuffer.getHeight + 20 - fm.getMaxDescent
+    g2d.drawString(s, x, y)
     g2d.dispose();
 
-    val writer = ImageIO.getImageWriter(reader);
-    val param = writer.getDefaultWriteParam();
-    param.setCompressionMode(MODE_COPY_FROM_METADATA); // This modes ensures closest to original compression
-
-
-// BufferedImage
+    val writer = ImageIO.getImageWriter(reader)
+    val param = new JPEGImageWriteParam(null)
+    param.setCompressionMode(MODE_EXPLICIT)
+    param.setCompressionQuality(0.98f)
+    param.setOptimizeHuffmanTables(true)
 
     val bo = new ByteArrayOutputStream
     val ios = ImageIO.createImageOutputStream(bo)
     writer.setOutput(ios)
-    writer.write(null, new IIOImage(target, null, null),  param)
+    writer.write(null, new IIOImage(target, null, reader.getImageMetadata(0)),  param)
 
 
     Ok(bo.toByteArray).as("image/jpeg")  }
