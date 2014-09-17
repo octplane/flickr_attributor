@@ -24,20 +24,19 @@ class FlickrImage(id: String) {
       .option(HttpOptions.connTimeout(2000))
       .option(HttpOptions.readTimeout(5000))
 
-  lazy val (info: JsValue, status) = {
-    val src = baseRequest
+  lazy val (info: JsValue, status: String) = {
+    val src: String = baseRequest
       .param("method","flickr.photos.getInfo")
       .param("photo_id", id).asString
 
-    println(src)
-
-    val ret = Json.parse(src)
+    val ret: JsValue = Json.parse(src)
 
     ret.transform(stat) match {
-      case JsError(_) => (ret, None)
+      case JsError(_) => (ret, "ok")
       case JsSuccess(v, p) => {
-        if (v.value == "fail") {
-          (ret, src)
+        v.value match {
+          case "ok" => (ret, "ok")
+          case _ => (ret, src)
         }
       }
     }
