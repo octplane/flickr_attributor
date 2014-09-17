@@ -43,8 +43,6 @@ object Application extends Controller {
     val user = img.user
     val license = new License(img.license.toString)
 
-    println(license.icon)
-
     val src = img.images("Medium 640")
     val reader = ImageIO.getImageReadersBySuffix("jpg").next();
 
