@@ -1,9 +1,13 @@
 package models
 
+import play.api.Play
+import play.api.Play.current
+
 import scalaj.http.Http
 import scalaj.http.HttpOptions
 
 import javax.imageio._
+import java.io.FileInputStream
 
 class License(id: String) {
   val alias = {
@@ -42,15 +46,11 @@ class License(id: String) {
     case "0" => None
     case _ => {
       val reader = ImageIO.getImageReadersBySuffix("png").next
+      val file_asset = Play.getFile(s"app/assets/licenses/$alias.png")
+      val imageInputStream = ImageIO.createImageInputStream(new FileInputStream(file_asset))
 
-      // Fix me: Colors are distorted...
-      val image = Http(icon)
-        .option(HttpOptions.connTimeout(2000))
-        .option(HttpOptions.readTimeout(5000)) { inputStream =>
-          val imageInputStream = ImageIO.createImageInputStream(inputStream)
-          reader.setInput(imageInputStream);
-          reader.readAll(0, null); // Important, also read metadata
-      }
+      reader.setInput(imageInputStream)
+      val image = reader.readAll(0, null) // Important, also read metadata
 
       Some(image.getRenderedImage.asInstanceOf[java.awt.image.BufferedImage])
     }
