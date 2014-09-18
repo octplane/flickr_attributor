@@ -29,21 +29,22 @@ import java.awt.RenderingHints
 
 import java.io.ByteArrayOutputStream
 
+import scala.util.Random
+
 
 object Application extends Controller {
 
-  def index = Action {
-    var pos = 0
-    for  (pos <- 1 to 6) {
-      val l = new License(s"$pos")
-      println(l.icon)
-    }
+  // def index = Action {
+  //   val candidates = Seq("6280941316", "145197704", "2271154446",
+  //     "2013404", "5996465579",
+  //     "7176605114", "6709759539")
 
-  	Ok(views.html.index("Your new application is ready."))
-  }
 
-  def attribute(id: String) = Cached
-    .status(_ => "/attribute/"+ id, 200)
+  // 	Ok(views.html.index("Your new application is ready.", Random.shuffle(candidates).head))
+  // }
+
+  def attribute(id: String, size: String) = Cached
+    .status(_ => "/attribute/"+ id + "/" + size, 200)
     .includeStatus(500, 60)
     .includeStatus(404, 120) { Action
     {
@@ -58,7 +59,7 @@ object Application extends Controller {
             val license = new License(img.license.toString)
             val lic_text = license.text
 
-            val src = img.images("Medium 640")
+            val src = img.images(size)
             val reader = ImageIO.getImageReadersBySuffix("jpg").next();
 
             // Fix me: Colors are distorted...
@@ -93,12 +94,11 @@ object Application extends Controller {
                   90
                 }
               }
-            
 
             g2d.setPaint(Color.lightGray)
             g2d.setFont(new Font("Serif", Font.PLAIN, 14))
 
-            val text = s"$lic_text$title by $user on Flickr"
+            val text = s"$lic_text$user on Flickr '$title'"
             val fm = g2d.getFontMetrics()
             val y = sourceBuffer.getHeight + 18 - fm.getMaxDescent
             g2d.drawString(text, x, y)
@@ -123,6 +123,7 @@ object Application extends Controller {
         }
       } catch {
         case e:Exception => {
+          println(e.printStackTrace)
           InternalServerError(e.toString)
         }
       }

@@ -6,9 +6,8 @@ import net.sf.ehcache.config._
 import net.sf.ehcache.store._
 import net.sf.ehcache.config.PersistenceConfiguration._
 
-
 object Global extends GlobalSettings {
- override def onStart(app: Application) {
+  override def onStart(app: Application) {
     Logger.info("Application has started")
     val cache = app.plugin[EhCachePlugin].get
     //Create a singleton CacheManager using defaults
@@ -22,6 +21,7 @@ object Global extends GlobalSettings {
   	    .persistence(new PersistenceConfiguration()
   	    	.strategy(Strategy.LOCALTEMPSWAP))
         .maxEntriesLocalDisk(1000)
+        .logging(true)
     )
 
 	 manager.addCache(testCache)

@@ -10,6 +10,23 @@ import scalaj.http.HttpOptions
 class FlickrImage(id: String) {
   val flickREndpoint = "https://api.flickr.com/services/rest/"
 
+  val aliasToLabel = Map(
+    "s" -> "Square",
+    "q" -> "Large Square",
+    "t" -> "Thumbnail",
+    "m" -> "Small",
+    "n" -> "Small 320",
+    ""  -> "Medium",
+    "z" -> "Medium 640",
+    "c" -> "Medium 800",
+    "b" -> "Large",
+    "h" -> "Large 1600",
+    "k" -> "Large 2048",
+    "o" -> "Original"
+    )
+
+  val labelToAlias = aliasToLabel map {_.swap}
+
   val key = Play.current.configuration.getString("flickr.key").get
 
   val rawTitle = (__ \ 'photo \ 'title \ '_content).json.pick[JsString]
@@ -47,6 +64,7 @@ class FlickrImage(id: String) {
       .param("method","flickr.photos.getSizes")
       .param("photo_id", id).asString
 
+      println(src)
     Json.parse(src)
   }
 
@@ -57,7 +75,7 @@ class FlickrImage(id: String) {
   lazy val images = {
     val picker = (__ \ 'sizes \ 'size ).json.pick[JsArray]
     sizes.transform(picker).get.value.map( sz =>
-      (sz \ "label").asOpt[JsString].get.value -> (sz \ "source").asOpt[JsString].get.value
+      labelToAlias((sz \ "label").asOpt[JsString].get.value) -> (sz \ "source").asOpt[JsString].get.value
     ).toMap
   }
 

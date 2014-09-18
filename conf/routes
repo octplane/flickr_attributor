@@ -2,11 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           controllers.Application.index()
-
-GET   /flickr/:id/embed_license          controllers.Application.attribute(id: String)
+GET   /flickr/:id/:size          controllers.Application.attribute(id: String, size: String)
+GET   /flickr/:id          controllers.Application.attribute(id: String, size="")
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+# GET     /assets/*file               controllers.Assets.at(path="/public", file)
