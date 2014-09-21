@@ -1,6 +1,6 @@
 ## Share and respect the license !
 
-![Creative Commons](http://fa.oct.zoy.org/flickr/6709759539.jpg)
+![Creative Commons](http://fa.oct.zoy.org/flickr/6709759539)
 
 ### What's wrong with Creative Commons picture sharing ?
 
@@ -18,7 +18,7 @@ Displaying the license information on the media brings a simple solution to that
 
 This webapp generates photos that contain the attribution and details of the licence at the bottom of it. Such as this picture:
 
-![A Puppy !](http://fa.oct.zoy.org/images/8165495019.jpg)
+![A Puppy !](http://fa.oct.zoy.org/images/8165495019)
 
 Of course, there is no link, and not full identifier of the picture in the generated legend, and as specified the Creative Commons guidelines:
 
@@ -36,7 +36,7 @@ Flickr Attributor is a Web service which means it has no user interface. To gene
 http://fa.oct.zoy.org/flickr/2696912806
 ```
 
-And you can get the image with its license. You can also use this bookmarklet <a href="javascript:(function(){var%20l=window.location.href;l=%22http://fa.oct.zoy.org/flickr/%22+l.replace(/https:\/\/www.flickr.com\/photos\/[^\/]+\//,%22%22).replace(/\/.*/,%22%22),window.open(l);})()">Flickr Attribute~</a> on any flickr Photo page.
+And you can get the image with its license. You can find a bookmarklet [on the original blog post](http://oct.zoy.org/2014/09/08/the-flickr-attributor.html)
 
 ![A tree](http://fa.oct.zoy.org/flickr/2696912806)
 
