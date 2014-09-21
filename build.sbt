@@ -4,7 +4,7 @@ import NativePackagerKeys._
 
 name := """flickr_attributor"""
 
-version := "1.0-SNAPSHOT"
+version := "1.0.2"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -23,7 +23,7 @@ maintainer in Docker := "Pierre Baillet <pierre@baillet.name>"
 
 name in Docker := "flickr_attributor"
 
-version in Docker <<= sbtVersion
+version in Docker <<= version
 
 dockerBaseImage := "williamyeh/java8"
 

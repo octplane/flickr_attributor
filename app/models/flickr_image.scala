@@ -63,8 +63,6 @@ class FlickrImage(id: String) {
     val src = baseRequest
       .param("method","flickr.photos.getSizes")
       .param("photo_id", id).asString
-
-      println(src)
     Json.parse(src)
   }
 

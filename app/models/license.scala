@@ -46,8 +46,8 @@ class License(id: String) {
     case "0" => None
     case _ => {
       val reader = ImageIO.getImageReadersBySuffix("png").next
-      val file_asset = Play.getFile(s"app/assets/licenses/$alias.png")
-      val imageInputStream = ImageIO.createImageInputStream(new FileInputStream(file_asset))
+      val file_asset = Play.resourceAsStream(s"public/images/licenses/$alias.png").get
+      val imageInputStream = ImageIO.createImageInputStream(file_asset)
 
       reader.setInput(imageInputStream)
       val image = reader.readAll(0, null) // Important, also read metadata
