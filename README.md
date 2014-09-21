@@ -18,7 +18,7 @@ Displaying the license information on the media brings a simple solution to that
 
 This webapp generates photos that contain the attribution and details of the licence at the bottom of it. Such as this picture:
 
-![A Puppy !](http://fa.oct.zoy.org/images/8165495019)
+![A Puppy !](http://fa.oct.zoy.org/flickr/8165495019)
 
 Of course, there is no link, and not full identifier of the picture in the generated legend, and as specified the Creative Commons guidelines:
 
