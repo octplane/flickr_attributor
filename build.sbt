@@ -4,7 +4,7 @@ import NativePackagerKeys._
 
 name := """flickr_attributor"""
 
-version := "1.0.2"
+version := "1.0.3"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -32,3 +32,5 @@ dockerRepository := Some("octplane")
 dockerExposedPorts in Docker := Seq(9000)
 
 dockerExposedVolumes in Docker := Seq("/opt/docker/logs")
+
+bashScriptExtraDefines += """export JAVA_OPTS="-Xmx256m -Xms256m""""
